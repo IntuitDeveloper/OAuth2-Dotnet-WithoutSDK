@@ -5,24 +5,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
- <%--   <script type="text/javascript">
-        function getParentWindow() {
-            var father = window.opener;
-            if (father == undefined) {
-                father = window.dialogArguments
-            }
 
-            return father;
-        }
-    </script>--%>
      <% if (HttpContext.Current.Session["accessToken"]!= null &&  HttpContext.Current.Session["callMadeBy"] != null)
          {
              if (HttpContext.Current.Session["callMadeBy"].ToString() != "OpenId")
              {
 
                  Response.Write("<script> window.opener.location.reload();window.close(); </script>");
-                 //Response.Write("<script>var parent=getParentWindow(); parent.reload(); window.close();</script>");
-                 //Response.Write("<script>window.close(); </script>");
+               
              }
          }
 
@@ -70,10 +60,7 @@
            ImageUrl="Images/IntuitSignIn-lg-white@2x.jpg"
            OnClick="ImgSIWI_Click" Height="40px" Width="200px"/>
 
-    <%--      <asp:ImageButton id="btnSIWI" runat="server" AlternateText="Sign In With Intuit"
-           ImageAlign="left"
-           ImageUrl="Images/IntuitSignIn-lg-white@2x.jpg"
-           OnClick="ImgSIWI_Click" OnClientClick="PrepareBlank()" Height="40px" Width="200px"/>--%>
+ 
 
      <br /><br /><br />
 
@@ -105,6 +92,14 @@
        
            OnClick="ImgQBOAPICall_Click" CssClass="font-size:14px border: 1px solid grey; padding: 10px; color: red" Height="40px" Width="200px"/>
 
+       <br /><br />
+     <p>
+    <asp:label runat="server" id="lblQBOCall" visible="false"></asp:label>
+    </p>
+     <br />
+
+       <br /><br /><br />
+
      <asp:ImageButton id="btnRevoke" runat="server" AlternateText="Revoke Tokens"
            ImageAlign="left"
            
@@ -114,19 +109,6 @@
 </div>
     </form>
 
-    <script type="text/javascript">
-        function PrepareBlank() {
-            // this will make a child page popup
-            window.open("OAuth2Manager.aspx", "MyWindow", "height=375,width=350");
-        }
-        //function PrepareBlank() {
-        //    document.getElementById("form").target = "_blank";
-        //}
-
-
-        //if (window.opener != null) {
-        //    window.opener.document.getElementById("form").target = "";
-        //}
-    </script>
+ 
 </body>
 </html>

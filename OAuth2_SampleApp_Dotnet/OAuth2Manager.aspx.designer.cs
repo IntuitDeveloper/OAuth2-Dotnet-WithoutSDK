@@ -85,6 +85,15 @@ namespace OAuth2_SampleApp_Dotnet {
         protected global::System.Web.UI.WebControls.ImageButton btnQBOAPICall;
         
         /// <summary>
+        /// lblQBOCall control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblQBOCall;
+        
+        /// <summary>
         /// btnRevoke control.
         /// </summary>
         /// <remarks>

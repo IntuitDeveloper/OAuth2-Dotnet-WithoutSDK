@@ -133,27 +133,11 @@ namespace OAuth2_SampleApp_Dotnet
                             }
                         }
 
-
                     }
 
-
-
-                }
-
-               
-                //connect.Visible = true;
-                //revoke.Visible = false;
-                //lblConnected.Visible = false;
-               
+                }               
 
             }
-
-            //else
-            //{
-            //    connect.Visible = false;
-            //    revoke.Visible = true;
-            //    //Disconnect();
-            //}
 
         }
 
@@ -230,6 +214,12 @@ namespace OAuth2_SampleApp_Dotnet
                     //call QBO api
                     qboApiCall(Session["accessToken"].ToString(), Session["refreshToken"].ToString(), Session["realmId"].ToString());
                 }
+            }
+            else
+            {
+                output("SIWI call does not returns realm for QBO qbo api call.");
+                lblQBOCall.Visible = true;
+                lblQBOCall.Text = "SIWI call does not returns realm for QBO qbo api call";
             }
 
         }
@@ -364,8 +354,10 @@ namespace OAuth2_SampleApp_Dotnet
                 scopeVal = scopeValSIWI;
             }
 
-            //Create the OAuth 2.0 authorization request.
-            authorizationRequest = string.Format("{0}?client_id={1}&response_type=code&scope={2}&redirect_uri={3}&state={4}",
+            if (authorizationEndpoint != "" && authorizationEndpoint != null)
+            {
+                //Create the OAuth 2.0 authorization request.
+                authorizationRequest = string.Format("{0}?client_id={1}&response_type=code&scope={2}&redirect_uri={3}&state={4}",
                     authorizationEndpoint,
                     clientID,
                     scopeVal,
@@ -374,20 +366,24 @@ namespace OAuth2_SampleApp_Dotnet
 
 
 
-            if (callMadeBy == "C2QB" || callMadeBy=="SIWI")
-            {
-                Response.Redirect(authorizationRequest, "_blank", "menubar=0,scrollbars=1,width=780,height=900,top=10");
-               // Response.Redirect(authorizationRequest, "_blank");
+                if (callMadeBy == "C2QB" || callMadeBy == "SIWI")
+                {
+                    //redirect to authorization request url
+                    Response.Redirect(authorizationRequest, "_blank", "menubar=0,scrollbars=1,width=780,height=900,top=10");
+   
+
+                }
+                else
+                {
+                    //redirect to authorization request url
+                    Response.Redirect(authorizationRequest);
+                }
 
             }
             else
             {
-                //redirect to authorization request url
-                Response.Redirect(authorizationRequest);
+                output("Missing authorizationEndpoint url!");
             }
-
-
-
 
 
         }
@@ -556,16 +552,6 @@ namespace OAuth2_SampleApp_Dotnet
                 }
             }
 
-            //finally
-            //{
-
-            //    //call qbo api if realmId is not blank-> for Get App Now and C2QB scopes
-            //    //realmId will be "" for SIWI flow
-            //    if (realmId != "")
-            //    {
-            //        qboApiCall(access_token, refresh_token, realmId);
-            //    }
-            //}
         }
 
         private void performRefreshToken(string refresh_token)
@@ -632,10 +618,7 @@ namespace OAuth2_SampleApp_Dotnet
                                 access_token = refreshtokenEndpointDecoded["access_token"];
                                 Session["accessToken"] = access_token;
 
-                                //if (realmId != null || realmId != "")
-                                //{
-                                //    qboApiCall(access_token, refresh_token, realmId);
-                                //}
+                          
 
                             }
                         }
@@ -1053,12 +1036,14 @@ namespace OAuth2_SampleApp_Dotnet
                         output("Invalid/Expired Access Token.");
                         //if you get a 401 token expiry then perform token refresh
                         performRefreshToken(refresh_token);
+
+                        //Retry QBO API call again with new tokens
                         if (Session["accessToken"] != null && Session["refreshToken"] != null && Session["realmId"] != null)
                         {
                             qboApiCall(Session["accessToken"].ToString(), Session["refreshToken"].ToString(), Session["realmId"].ToString() );
                         }
 
-                        //Retry QBO API call again with new tokens
+                       
                     }
                     else
                     {
@@ -1067,17 +1052,15 @@ namespace OAuth2_SampleApp_Dotnet
                         {
                             string responseText = qboApiReader.ReadToEnd();
                             output("QBO call successful.");
+                            lblQBOCall.Visible = true;
+                            lblQBOCall.Text = "QBO Call successful";
 
                         }
 
                     }
-                    ////revoke token call example, can be made after you have aready have saved tokens and want to call this from your code using the saved token
-                    //performRevokeToken(access_token, refresh_token);
+                    
                 }
-                else
-                {
-                    output("SIWI call does not returns token or realm for QBO qbo api call.");
-                }
+             
             }
             catch (WebException ex)
             {
@@ -1227,6 +1210,7 @@ namespace OAuth2_SampleApp_Dotnet
 
     }
 
+    //Extension method for Redirect
     public static class ResponseHelper
     {
         public static void Redirect(this HttpResponse response, string url, string target, string windowFeatures)
