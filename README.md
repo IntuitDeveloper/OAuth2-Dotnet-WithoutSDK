@@ -1,3 +1,5 @@
+[![Sample Banner](views/Sample.png)][ss1]
+
 # OAuth2-Dotnet-master
 OAuth2 Web Forms Sample app for Dotnet
 The Intuit Developer team has written this OAuth 2.0 Sample App in .Net C# to provide working examples of OAuth 2.0 concepts, and how to integrate with Intuit endpoints.
@@ -70,3 +72,4 @@ All flows should work. The sample app supports the following flows:
 
 For more details on the different calls refer Oauth2/OpenId Connect docs on developer.intuit.com
 
+[ss1]: https://help.developer.intuit.com/s/samplefeedback?cid=9010&repoName=OAuth2-Dotnet-WithoutSDK
