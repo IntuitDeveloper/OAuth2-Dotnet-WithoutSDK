@@ -799,7 +799,7 @@ namespace OAuth2_SampleApp_Dotnet
                 {
                     mod = key.N;
                 }
-                if (key.N != null)
+                if (key.E != null)
                 {
                     expo = key.E;
                 }
