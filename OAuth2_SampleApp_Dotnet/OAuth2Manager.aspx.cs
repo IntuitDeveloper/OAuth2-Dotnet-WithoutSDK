@@ -95,7 +95,7 @@ namespace OAuth2_SampleApp_Dotnet
                         incoming_state = Request.QueryString["state"].ToString();
                         if (Session["CSRF"] != null)
                         {
-                            //match incoming state with the saved State in your DB from doOAuth function and then execute the below steps
+                            //match incoming state with the saved State in your DB from DoOAuth function and then execute the below steps
                             if (Session["CSRF"].ToString() == incoming_state)
                             {
                                 //extract realmId is scope is for C2QB or Get App Now
@@ -116,7 +116,7 @@ namespace OAuth2_SampleApp_Dotnet
 
                                     //start the code exchange at the Token Endpoint.
                                     //this call will fail with 'invalid grant' error if application is not stopped after testing one button click flow as code is not renewed
-                                    performCodeExchange(code, redirectURI, realmId);
+                                    PerformCodeExchange(code, redirectURI, realmId);
 
                                 }
 
@@ -148,13 +148,13 @@ namespace OAuth2_SampleApp_Dotnet
             if (Session["accessToken"] == null)
             {
                 //call this once a day or at application_start in your code.
-                getDiscoveryData();
+                GetDiscoveryData();
 
                 //get JWKS keys
-                getJWKSkeys();
+                GetJWKSkeys();
 
-                //doOauth for Connect to Quickbooks button
-                doOAuth("C2QB");
+                //DoOAuth for Connect to Quickbooks button
+                DoOAuth("C2QB");
             }
 
 
@@ -166,13 +166,13 @@ namespace OAuth2_SampleApp_Dotnet
             {
 
                 //call this once a day or at application_start in your code.
-                getDiscoveryData();
+                GetDiscoveryData();
 
                 //get JWKS keys
-                getJWKSkeys();
+                GetJWKSkeys();
 
-                //doOauth for Get App Now button
-                doOAuth("OpenId");
+                //DoOAuth for Get App Now button
+                DoOAuth("OpenId");
             }
 
 
@@ -183,13 +183,13 @@ namespace OAuth2_SampleApp_Dotnet
             if (Session["accessToken"] == null)
             {
                 //call this once a day or at application_start in your code.
-                getDiscoveryData();
+                GetDiscoveryData();
 
                 //get JWKS keys
-                getJWKSkeys();
+                GetJWKSkeys();
 
-                //doOauth for Sign In with Intuit button
-                doOAuth("SIWI");
+                //DoOAuth for Sign In with Intuit button
+                DoOAuth("SIWI");
             }
 
 
@@ -200,7 +200,7 @@ namespace OAuth2_SampleApp_Dotnet
             if (Session["accessToken"] != null && Session["refreshToken"] != null)
             {
                 //revoke tokens
-                performRevokeToken(Session["accessToken"].ToString(), Session["refreshToken"].ToString());
+                PerformRefreshToken(Session["accessToken"].ToString(), Session["refreshToken"].ToString());
             }
 
         }
@@ -212,7 +212,7 @@ namespace OAuth2_SampleApp_Dotnet
                 if (Session["accessToken"] != null && Session["refreshToken"] != null)
                 {
                     //call QBO api
-                    qboApiCall(Session["accessToken"].ToString(), Session["refreshToken"].ToString(), Session["realmId"].ToString());
+                    QboApiCall(Session["accessToken"].ToString(), Session["refreshToken"].ToString(), Session["realmId"].ToString());
                 }
             }
             else
@@ -232,7 +232,7 @@ namespace OAuth2_SampleApp_Dotnet
         #region get Discovery data
 
 
-        private void getDiscoveryData()
+        private void GetDiscoveryData()
         {
             output("Fetching Discovery Data.");
 
@@ -321,7 +321,7 @@ namespace OAuth2_SampleApp_Dotnet
         #endregion
 
         #region OAuth2 calls
-        private void doOAuth(string callMadeBy)
+        private void DoOAuth(string callMadeBy)
         {
             output("Intiating OAuth2 call to get code.");
             string authorizationRequest = "";
@@ -388,7 +388,7 @@ namespace OAuth2_SampleApp_Dotnet
 
         }
 
-        private void performCodeExchange(string code, string redirectURI, string realmId)
+        private void PerformCodeExchange(string code, string redirectURI, string realmId)
         {
             output("Exchanging code for tokens.");
 
@@ -475,7 +475,7 @@ namespace OAuth2_SampleApp_Dotnet
                             //Since C2QB flow does not has the required scopes, you will get exception.
                             //Here we will handle the exeception and then finally make QBO api call
                             //In your code, based on your workflows/scope, you can choose to not make this call
-                            UserInfo userdata = getUserInfo(access_token, refresh_token);
+                            UserInfo userdata = GetUserInfo(access_token, refresh_token);
 
                             //read userinfo endpoint details
                             sub = userdata.Sub;
@@ -554,7 +554,7 @@ namespace OAuth2_SampleApp_Dotnet
 
         }
 
-        private void performRefreshToken(string refresh_token)
+        private void PerformRefreshToken(string refresh_token)
         {
             output("Exchanging refresh token for access token.");//refresh token is valid for 100days and access token for 1hr
             string access_token = "";
@@ -659,7 +659,7 @@ namespace OAuth2_SampleApp_Dotnet
             output("Access token refreshed.");
         }
 
-        private void performRevokeToken(string access_token, string refresh_token)
+        private void PerformRefreshToken(string access_token, string refresh_token)
         {
             output("Performing Revoke tokens.");
 
@@ -758,7 +758,7 @@ namespace OAuth2_SampleApp_Dotnet
 
 
 
-        private void getJWKSkeys()
+        private void GetJWKSkeys()
         {
             output("Making Get JWKS Keys Call.");
 
@@ -962,7 +962,7 @@ namespace OAuth2_SampleApp_Dotnet
 
         }
 
-        private UserInfo getUserInfo(string access_token, string refresh_token)
+        private UserInfo GetUserInfo(string access_token, string refresh_token)
         {
             output("Making Get User Info Call.");
 
@@ -1005,7 +1005,7 @@ namespace OAuth2_SampleApp_Dotnet
 
         #region qbo calls
 
-        private void qboApiCall(string access_token, string refresh_token, string realmId)
+        private void QboApiCall(string access_token, string refresh_token, string realmId)
         {
             try
             {
@@ -1035,12 +1035,12 @@ namespace OAuth2_SampleApp_Dotnet
                     {
                         output("Invalid/Expired Access Token.");
                         //if you get a 401 token expiry then perform token refresh
-                        performRefreshToken(refresh_token);
+                        PerformRefreshToken(refresh_token);
 
                         //Retry QBO API call again with new tokens
                         if (Session["accessToken"] != null && Session["refreshToken"] != null && Session["realmId"] != null)
                         {
-                            qboApiCall(Session["accessToken"].ToString(), Session["refreshToken"].ToString(), Session["realmId"].ToString() );
+                            QboApiCall(Session["accessToken"].ToString(), Session["refreshToken"].ToString(), Session["realmId"].ToString() );
                         }
 
                        
@@ -1155,7 +1155,7 @@ namespace OAuth2_SampleApp_Dotnet
             RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
             byte[] bytes = new byte[length];
             rng.GetBytes(bytes);
-            return base64urlencodeNoPadding(bytes);
+            return Base64urlencodeNoPadding(bytes);
         }
 
         /// <summary>
@@ -1175,7 +1175,7 @@ namespace OAuth2_SampleApp_Dotnet
         /// </summary>
         /// <param name="buffer"></param>
         /// <returns></returns>
-        public static string base64urlencodeNoPadding(byte[] buffer)
+        public static string Base64urlencodeNoPadding(byte[] buffer)
         {
             string base64 = Convert.ToBase64String(buffer);
 
