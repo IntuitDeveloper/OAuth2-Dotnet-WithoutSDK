@@ -150,9 +150,6 @@ namespace OAuth2_SampleApp_Dotnet
                 //call this once a day or at application_start in your code.
                 GetDiscoveryData();
 
-                //get JWKS keys
-                GetJWKSkeys();
-
                 //DoOAuth for Connect to Quickbooks button
                 DoOAuth("C2QB");
             }
@@ -168,9 +165,6 @@ namespace OAuth2_SampleApp_Dotnet
                 //call this once a day or at application_start in your code.
                 GetDiscoveryData();
 
-                //get JWKS keys
-                GetJWKSkeys();
-
                 //DoOAuth for Get App Now button
                 DoOAuth("OpenId");
             }
@@ -184,9 +178,6 @@ namespace OAuth2_SampleApp_Dotnet
             {
                 //call this once a day or at application_start in your code.
                 GetDiscoveryData();
-
-                //get JWKS keys
-                GetJWKSkeys();
 
                 //DoOAuth for Sign In with Intuit button
                 DoOAuth("SIWI");
@@ -758,7 +749,7 @@ namespace OAuth2_SampleApp_Dotnet
 
 
 
-        private void GetJWKSkeys()
+        private void GetJWKSkeys(String headerKid)
         {
             output("Making Get JWKS Keys Call.");
 
@@ -788,27 +779,24 @@ namespace OAuth2_SampleApp_Dotnet
                 jwksEndpointDecoded = JsonConvert.DeserializeObject<JWKS>(responseText);
 
 
-
-
             }
+
 
             //get mod and exponent value
             foreach (var key in jwksEndpointDecoded.Keys)
             {
-                if (key.N != null)
-                {
-                    mod = key.N;
-                }
-                if (key.E != null)
-                {
+             if (headerKid == key.Kid) {
+                    if (key.N != null)
+                    {
+                        mod = key.N;
+                    }
+                    if (key.E != null)
+                    {
                     expo = key.E;
+                    }
                 }
-
             }
-
             output("JWKS Keys obtained.");
-
-
         }
 
         private bool isIdTokenValid(string id_token)
@@ -924,6 +912,7 @@ namespace OAuth2_SampleApp_Dotnet
 
             }
 
+           GetJWKSkeys(headerData.Kid);
 
             //verify Siganture matches the sigend concatenation of the encoded header and the encoded payload with the specified algorithm
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
