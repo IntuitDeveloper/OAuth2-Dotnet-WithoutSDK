@@ -749,10 +749,9 @@ namespace OAuth2_SampleApp_Dotnet
 
 
 
-        private void GetJWKSkeys(String headerKid)
+        private void GetJWKSkeys(string headerKid)
         {
             output("Making Get JWKS Keys Call.");
-
             JWKS jwksEndpointDecoded;
 
 
