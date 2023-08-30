@@ -150,9 +150,6 @@ namespace OAuth2_SampleApp_Dotnet
                 //call this once a day or at application_start in your code.
                 GetDiscoveryData();
 
-                //get JWKS keys
-                //GetJWKSkeys();
-
                 //DoOAuth for Connect to Quickbooks button
                 DoOAuth("C2QB");
             }
@@ -168,9 +165,6 @@ namespace OAuth2_SampleApp_Dotnet
                 //call this once a day or at application_start in your code.
                 GetDiscoveryData();
 
-                //get JWKS keys
-                //GetJWKSkeys();
-
                 //DoOAuth for Get App Now button
                 DoOAuth("OpenId");
             }
@@ -184,9 +178,6 @@ namespace OAuth2_SampleApp_Dotnet
             {
                 //call this once a day or at application_start in your code.
                 GetDiscoveryData();
-
-                //get JWKS keys
-                //GetJWKSkeys();
 
                 //DoOAuth for Sign In with Intuit button
                 DoOAuth("SIWI");
