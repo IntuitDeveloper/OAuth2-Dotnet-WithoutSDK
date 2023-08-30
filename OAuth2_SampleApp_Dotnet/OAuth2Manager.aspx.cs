@@ -749,10 +749,9 @@ namespace OAuth2_SampleApp_Dotnet
 
 
 
-        private void GetJWKSkeys(String headerKid)
+        private void GetJWKSkeys(string headerKid)
         {
             output("Making Get JWKS Keys Call.");
-
             JWKS jwksEndpointDecoded;
 
 
@@ -806,15 +805,16 @@ namespace OAuth2_SampleApp_Dotnet
 
             string idToken = id_token;
             string[] splitValues = idToken.Split('.');
+            string kidFromHeader = null;
             if (splitValues[0] != null)
             {
 
                 //decode header 
                 var headerJson = Encoding.UTF8.GetString(FromBase64Url(splitValues[0].ToString()));
                 IdTokenHeader headerData = JsonConvert.DeserializeObject<IdTokenHeader>(headerJson);
-
+                kidFromHeader = headerData.Kid;
                 //Verify if the key id of the key used to sign the payload is not null
-                if (headerData.Kid == null)
+                if (kidFromHeader == null)
                 {
                     return false;
                 }
@@ -912,7 +912,7 @@ namespace OAuth2_SampleApp_Dotnet
 
             }
 
-           GetJWKSkeys(headerData.Kid);
+           GetJWKSkeys(kidFromHeader);
 
             //verify Siganture matches the sigend concatenation of the encoded header and the encoded payload with the specified algorithm
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
